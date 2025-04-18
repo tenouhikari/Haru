@@ -54,3 +54,26 @@ if ('webkitSpeechRecognition' in window) {
 } else {
   console.log("音声認識はこのブラウザではサポートされていません。");
 }
+// 会話履歴を保存
+function saveChat() {
+  localStorage.setItem('chatHistory', chatBox.innerHTML);
+}
+
+// ページ読み込み時に履歴を復元
+function loadChat() {
+  const saved = localStorage.getItem('chatHistory');
+  if (saved) {
+    chatBox.innerHTML = saved;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}
+
+// メッセージ追加のたびに保存
+const originalAppendMessage = appendMessage;
+appendMessage = function(sender, message) {
+  originalAppendMessage(sender, message);
+  saveChat();
+};
+
+// ページ読み込み時に履歴をロード
+window.onload = loadChat;
