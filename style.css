@@ -22,10 +22,11 @@ h1 {
   padding: 10px;
   overflow-y: scroll;
   background-color: #ffffff;
+  text-align: left;
 }
 
 #user-input {
-  width: 70%;
+  width: 60%;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
@@ -40,4 +41,15 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   margin-left: 5px;
+}
+
+/* 音声ボタンのスタイル */
+#mic-button {
+  padding: 10px;
+  background-color: #ffa500;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-left: 5px;
+  cursor: pointer;
 }
