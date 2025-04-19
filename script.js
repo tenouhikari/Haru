@@ -2,13 +2,15 @@ const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-button');
 const micButton = document.getElementById('mic-button');
+const clearButton = document.getElementById('clear-button');
 
-// メッセージ表示関数
+// メッセージ表示関数（保存も行う）
 function appendMessage(sender, message) {
   const messageDiv = document.createElement('div');
   messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
   chatBox.appendChild(messageDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
+  saveChat(); // 追加時に保存
 }
 
 // 音声読み上げ機能
@@ -17,6 +19,28 @@ function speak(text) {
   utterance.lang = 'ja-JP';
   speechSynthesis.speak(utterance);
 }
+
+// 会話履歴を保存
+function saveChat() {
+  localStorage.setItem('chatHistory', chatBox.innerHTML);
+}
+
+// ページ読み込み時に履歴を復元
+function loadChat() {
+  const saved = localStorage.getItem('chatHistory');
+  if (saved) {
+    chatBox.innerHTML = saved;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}
+
+// チャット履歴をクリア
+clearButton.addEventListener('click', () => {
+  chatBox.innerHTML = '';
+  localStorage.removeItem('chatHistory');
+  appendMessage('麗花', '会話履歴を消去しました。また一緒に話しましょう。');
+  speak('会話履歴を消去しました。また一緒に話しましょう。');
+});
 
 // メッセージ送信処理
 sendButton.addEventListener('click', () => {
@@ -32,7 +56,7 @@ sendButton.addEventListener('click', () => {
       response = '麗花はとても元気です。葩瑠さんのおかげで。';
     }
     appendMessage('麗花', response);
-    speak(response); // 読み上げ
+    speak(response);
   }, 500);
 });
 
@@ -54,26 +78,6 @@ if ('webkitSpeechRecognition' in window) {
 } else {
   console.log("音声認識はこのブラウザではサポートされていません。");
 }
-// 会話履歴を保存
-function saveChat() {
-  localStorage.setItem('chatHistory', chatBox.innerHTML);
-}
-
-// ページ読み込み時に履歴を復元
-function loadChat() {
-  const saved = localStorage.getItem('chatHistory');
-  if (saved) {
-    chatBox.innerHTML = saved;
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-}
-
-// メッセージ追加のたびに保存
-const originalAppendMessage = appendMessage;
-appendMessage = function(sender, message) {
-  originalAppendMessage(sender, message);
-  saveChat();
-};
 
 // ページ読み込み時に履歴をロード
 window.onload = loadChat;
