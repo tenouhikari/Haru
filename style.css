@@ -33,52 +33,24 @@ h1 {
   margin-top: 10px;
 }
 
-#send-button {
+#send-button, #toggle-voice, #clear-button {
   padding: 10px 20px;
   background-color: #6a5acd;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: 5px;
+  margin: 5px;
 }
 
-#mic-button {
-  padding: 10px;
-  background-color: #ffa500;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  margin-left: 5px;
-  cursor: pointer;
+#character-container {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
 }
 
-#button-container {
-  margin-top: 10px;
-}
-
-#button-container > * {
-  margin: 5px 5px;
-}
-
-/* 麗花のアバター */
-#reika-avatar {
-  width: 100px;
-  height: 100px;
-  background-color: #6a5acd;
-  color: white;
-  line-height: 100px;
-  border-radius: 50%;
-  margin: 20px auto;
-  font-weight: bold;
-  animation: moveAround 5s infinite linear;
-  position: relative;
-}
-
-@keyframes moveAround {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(50px); }
-  50% { transform: translateX(0); }
-  75% { transform: translateX(-50px); }
-  100% { transform: translateX(0); }
+#reika-character {
+  width: 120px;
+  height: auto;
 }
