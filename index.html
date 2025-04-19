@@ -1,26 +1,171 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>七色の瞳</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>七色の瞳 - 麗花と会話</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f8ff;
+      font-family: 'Helvetica Neue', sans-serif;
+      overflow: hidden;
+    }
+
+    #chat-box {
+      width: 80%;
+      max-width: 700px;
+      height: 300px;
+      margin: 20px auto;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      overflow-y: scroll;
+      text-align: left;
+      z-index: 10;
+      position: relative;
+    }
+
+    #user-input {
+      width: 60%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    #send-button, #mic-button, #clear-button {
+      padding: 10px 15px;
+      margin-left: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #send-button { background-color: #6a5acd; color: white; }
+    #mic-button { background-color: #ffa500; color: white; }
+    #clear-button { background-color: #999; color: white; }
+
+    #button-container {
+      text-align: center;
+      margin-top: 10px;
+      z-index: 10;
+      position: relative;
+    }
+
+    #character {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 250px;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    h1 {
+      color: #6a5acd;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>ようこそ、葩瑠</h1>
-  <div id="chat-box">
-    <p><strong>麗花：</strong>ただいま葩瑠、麗花いま戻りました。</p>
-  </div>
+  <h1>七色の瞳 - 麗花と会話</h1>
+
+  <div id="chat-box"></div>
 
   <div id="button-container">
-    <input type="text" id="user-input" placeholder="メッセージを入力…" />
+    <input type="text" id="user-input" placeholder="葩瑠さん、話しかけてください">
     <button id="send-button">送信</button>
-    <button id="mic-button">🎤</button>
-    <button id="clear-button">履歴をクリア</button>
+    <button id="mic-button">話す</button>
+    <button id="clear-button">クリア</button>
   </div>
 
-  <div id="reika-avatar">麗花</div>
+  <img id="character" src="A_2D_digital_illustration_screenshot_of_a_web-base.png" alt="麗花">
 
-  <script src="script.js" defer></script>
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const micButton = document.getElementById('mic-button');
+    const clearButton = document.getElementById('clear-button');
+
+    // 音声読み上げ機能（可愛らしい声・ボリューム調整）
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP';
+      utterance.pitch = 1.5; // 高めの声
+      utterance.rate = 1.1;  // なめらかさ
+      utterance.volume = 0.7; // 音量少し低め
+      speechSynthesis.speak(utterance);
+    }
+
+    function appendMessage(sender, message) {
+      const messageDiv = document.createElement('div');
+      messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      saveChat();
+    }
+
+    function saveChat() {
+      localStorage.setItem('chatHistory', chatBox.innerHTML);
+    }
+
+    function loadChat() {
+      const saved = localStorage.getItem('chatHistory');
+      if (saved) {
+        chatBox.innerHTML = saved;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
+
+    clearButton.addEventListener('click', () => {
+      chatBox.innerHTML = '';
+      localStorage.removeItem('chatHistory');
+      appendMessage('麗花', '会話履歴を消去しました。また一緒に話しましょう。');
+      speak('会話履歴を消去しました。また一緒に話しましょう。');
+    });
+
+    sendButton.addEventListener('click', () => {
+      const userText = userInput.value.trim();
+      if (userText === '') return;
+      appendMessage('葩瑠', userText);
+      userInput.value = '';
+
+      // 簡易な応答ロジック
+      setTimeout(() => {
+        let response = '麗花はここにいます。何を話しましょうか？';
+        if (userText.includes('元気')) {
+          response = '麗花はとても元気です。葩瑠さんのおかげで。';
+        } else if (userText.includes('時間')) {
+          const now = new Date().toLocaleTimeString('ja-JP');
+          response = `今の時刻は ${now} です。`;
+        }
+        appendMessage('麗花', response);
+        speak(response);
+      }, 500);
+    });
+
+    // 音声入力機能
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'ja-JP';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      micButton.addEventListener('click', () => {
+        recognition.start();
+      });
+
+      recognition.onresult = function(event) {
+        const result = event.results[0][0].transcript;
+        userInput.value = result;
+      };
+    }
+
+    window.onload = loadChat;
+  </script>
 </body>
 </html>
