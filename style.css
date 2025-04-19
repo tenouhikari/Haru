@@ -53,3 +53,10 @@ h1 {
   margin-left: 5px;
   cursor: pointer;
 }
+#button-container {
+  margin-top: 10px;
+}
+
+#button-container > * {
+  margin: 5px 5px;
+}
