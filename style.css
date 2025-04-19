@@ -1,3 +1,4 @@
+/* 全体の背景と文字スタイル */
 body {
   background-color: #f0f8ff;
   font-family: 'Helvetica Neue', sans-serif;
@@ -7,11 +8,13 @@ body {
   text-align: center;
 }
 
+/* タイトル */
 h1 {
   color: #6a5acd;
   margin-top: 50px;
 }
 
+/* チャット表示エリア */
 #chat-box {
   width: 90%;
   max-width: 600px;
@@ -23,16 +26,20 @@ h1 {
   overflow-y: scroll;
   background-color: #ffffff;
   text-align: left;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* 入力欄 */
 #user-input {
   width: 60%;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
   margin-top: 10px;
+  font-size: 16px;
 }
 
+/* 送信ボタン */
 #send-button {
   padding: 10px 20px;
   background-color: #6a5acd;
@@ -41,9 +48,10 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   margin-left: 5px;
+  font-size: 16px;
 }
 
-/* 音声ボタンのスタイル */
+/* 音声ボタン */
 #mic-button {
   padding: 10px;
   background-color: #ffa500;
@@ -52,11 +60,46 @@ h1 {
   border-radius: 5px;
   margin-left: 5px;
   cursor: pointer;
+  font-size: 16px;
 }
+
+/* 履歴クリアボタン（同様のスタイル） */
+#clear-button {
+  padding: 10px;
+  background-color: #dc143c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* ボタンエリア全体 */
 #button-container {
   margin-top: 10px;
 }
 
+/* ボタンの並び調整 */
 #button-container > * {
-  margin: 5px 5px;
+  margin: 5px;
+}
+
+/* モバイル端末対応 */
+@media (max-width: 600px) {
+  #user-input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  #button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #button-container > * {
+    width: 90%;
+    margin: 5px 0;
+  }
 }
