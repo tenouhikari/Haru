@@ -4,13 +4,13 @@ const sendButton = document.getElementById('send-button');
 const micButton = document.getElementById('mic-button');
 const clearButton = document.getElementById('clear-button');
 
-// メッセージ表示関数（保存も行う）
+// メッセージ表示関数（追加時に保存）
 function appendMessage(sender, message) {
   const messageDiv = document.createElement('div');
   messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
   chatBox.appendChild(messageDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
-  saveChat(); // 追加時に保存
+  saveChat();
 }
 
 // 音声読み上げ機能
@@ -60,6 +60,13 @@ sendButton.addEventListener('click', () => {
   }, 500);
 });
 
+// Enterキーでも送信可能にする
+userInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    sendButton.click();
+  }
+});
+
 // 音声入力機能
 if ('webkitSpeechRecognition' in window) {
   const recognition = new webkitSpeechRecognition();
@@ -74,6 +81,7 @@ if ('webkitSpeechRecognition' in window) {
   recognition.onresult = function(event) {
     const result = event.results[0][0].transcript;
     userInput.value = result;
+    sendButton.click(); // 音声認識後、自動送信
   };
 } else {
   console.log("音声認識はこのブラウザではサポートされていません。");
