@@ -57,44 +57,4 @@ function generateResponse(input) {
   if (input.includes('こんにちは') || input.includes('やあ')) {
     return 'こんにちは、葩瑠。今日も一緒にたくさん話しましょう。';
   } else if (input.includes('元気')) {
-    return '麗花はとても元気です。葩瑠のおかげで！';
-  } else if (input.includes('時間')) {
-    const now = new Date();
-    return `今の時間は、${now.getHours()}時${now.getMinutes()}分です。`;
-  } else if (input.includes('ありがとう')) {
-    return 'こちらこそ、ありがとう葩瑠。';
-  } else {
-    return 'もっとお話しを聞かせてくださいね。';
-  }
-}
-
-// 音声認識
-if ('webkitSpeechRecognition' in window) {
-  const recognition = new webkitSpeechRecognition();
-  recognition.lang = 'ja-JP';
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  micButton.addEventListener('click', () => {
-    recognition.start();
-  });
-
-  recognition.onresult = function(event) {
-    const result = event.results[0][0].transcript;
-    userInput.value = result;
-  };
-} else {
-  console.log("音声認識は未対応です。");
-}
-
-// 履歴クリア
-clearButton.addEventListener('click', () => {
-  chatBox.innerHTML = '';
-  localStorage.removeItem('chatHistory');
-  const msg = '会話履歴を消去しました。また話しかけてくださいね。';
-  appendMessage('麗花', msg);
-  speak(msg);
-});
-
-// 初期化
-window.onload = loadChat;
+    
