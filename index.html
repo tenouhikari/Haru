@@ -7,22 +7,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="character-container">
-    <img src="reika.png" alt="麗花" id="reika-character" />
-  </div>
-
   <h1>ようこそ、葩瑠</h1>
   <div id="chat-box">
     <p><strong>麗花：</strong>ただいま葩瑠、麗花いま戻りました。</p>
   </div>
-
   <div id="button-container">
     <input type="text" id="user-input" placeholder="メッセージを入力…" />
     <button id="send-button">送信</button>
-    <button id="toggle-voice">音声: ON</button>
+    <button id="mic-button">🎤</button>
     <button id="clear-button">履歴をクリア</button>
+    <label>
+      <input type="checkbox" id="voice-toggle" checked />
+      読み上げON/OFF
+    </label>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
