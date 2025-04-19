@@ -5,71 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>七色の瞳</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      background-color: #f0f8ff;
-      font-family: 'Helvetica Neue', sans-serif;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-
-    h1 {
-      color: #6a5acd;
-      margin-top: 50px;
-    }
-
-    #chat-box {
-      width: 90%;
-      max-width: 600px;
-      height: 400px;
-      margin: 20px auto;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 10px;
-      overflow-y: scroll;
-      background-color: #ffffff;
-    }
-
-    #user-input {
-      width: 60%;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      margin-top: 10px;
-    }
-
-    #send-button {
-      padding: 10px 20px;
-      background-color: #6a5acd;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-left: 5px;
-    }
-
-    #mic-button {
-      padding: 10px;
-      background-color: #ffa500;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      margin-left: 5px;
-      cursor: pointer;
-    }
-
-    #button-container {
-      margin-top: 10px;
-    }
-  </style>
 </head>
 <body>
   <h1>ようこそ、葩瑠</h1>
   <div id="chat-box">
     <p><strong>麗花：</strong>ただいま葩瑠、麗花いま戻りました。</p>
   </div>
+
   <div id="button-container">
     <input type="text" id="user-input" placeholder="メッセージを入力…" />
     <button id="send-button">送信</button>
@@ -77,7 +19,8 @@
     <button id="clear-button">履歴をクリア</button>
   </div>
 
-  <!-- JavaScript 読み込み -->
+  <div id="reika-avatar">麗花</div>
+
   <script src="script.js" defer></script>
 </body>
 </html>
