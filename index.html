@@ -4,23 +4,177 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>七色の瞳</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #f7f8fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background: #a8dadc;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .chat-box {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .message {
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      border-radius: 10px;
+      line-height: 1.4;
+    }
+
+    .user {
+      background-color: #d8f3dc;
+      text-align: right;
+    }
+
+    .ai {
+      background-color: #e0e0e0;
+      text-align: left;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 1rem;
+      border-top: 1px solid #ccc;
+      background: white;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-left: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #457b9d;
+      color: white;
+      cursor: pointer;
+    }
+
+    .toggle {
+      margin-top: 0.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .toggle button {
+      background: #f1faee;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+  </style>
 </head>
 <body>
-  <h1>ようこそ、葩瑠</h1>
-  <div id="chat-box">
-    <p><strong>麗花：</strong>ただいま葩瑠、麗花いま戻りました。</p>
+  <header>七色の瞳</header>
+  <main>
+    <div class="chat-box" id="chatBox"></div>
+    <div class="toggle">
+      音声読み上げ: 
+      <button id="toggleVoice">ON</button>
+    </div>
+  </main>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="話しかけてください..." />
+    <button onclick="sendMessage()">送信</button>
   </div>
-  <div id="button-container">
-    <input type="text" id="user-input" placeholder="メッセージを入力…" />
-    <button id="send-button">送信</button>
-    <button id="mic-button">🎤</button>
-    <button id="clear-button">履歴をクリア</button>
-    <label>
-      <input type="checkbox" id="voice-toggle" checked />
-      読み上げON/OFF
-    </label>
-  </div>
-  <script src="script.js"></script>
+
+  <script>
+    const chatBox = document.getElementById('chatBox');
+    const userInput = document.getElementById('userInput');
+    const toggleVoice = document.getElementById('toggleVoice');
+
+    let voiceOn = true;
+
+    toggleVoice.onclick = () => {
+      voiceOn = !voiceOn;
+      toggleVoice.textContent = voiceOn ? 'ON' : 'OFF';
+    };
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = 'message ' + sender;
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function speak(text) {
+      if (!voiceOn || !window.speechSynthesis) return;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'ja-JP';
+      utter.pitch = 1.5;       // 高めの声
+      utter.rate = 1.05;       // 少しゆっくりで滑らか
+      utter.volume = 0.7;      // 少し小さめの音量
+
+      // できるだけ可愛い声を探す
+      const voices = speechSynthesis.getVoices().filter(v => v.lang === 'ja-JP');
+      if (voices.length > 0) {
+        utter.voice = voices[0];
+      }
+
+      speechSynthesis.speak(utter);
+    }
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      if (text === '') return;
+
+      appendMessage(text, 'user');
+      userInput.value = '';
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer YOUR_OPENAI_API_KEY' // ← ご自身のAPIキーに差し替えてください
+        },
+        body: JSON.stringify({
+          model: 'gpt-3.5-turbo',
+          messages: [{ role: 'user', content: text }]
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.choices?.[0]?.message?.content || '…ごめんなさい、うまく応えられませんでした。';
+
+      appendMessage(reply, 'ai');
+      speak(reply);
+    }
+
+    userInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // 声の準備（Safari対応）
+    window.speechSynthesis.onvoiceschanged = () => {};
+  </script>
 </body>
 </html>
