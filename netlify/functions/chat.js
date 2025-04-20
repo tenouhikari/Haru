@@ -6,15 +6,22 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 exports.handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: "Method Not Allowed" }),
+    };
+  }
+
   try {
     const body = JSON.parse(event.body);
     const userMessage = body.message || "";
 
     const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo", // or "gpt-4" if your key allows
+      model: "gpt-3.5-turbo", // または "gpt-4" を使用可能
       messages: [
         { role: "system", content: "あなたは可愛らしい声で答えるAIアシスタント、麗花です。" },
-        { role: "user", content: userMessage }
+        { role: "user", content: userMessage },
       ],
     });
 
