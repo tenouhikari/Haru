@@ -8,24 +8,27 @@ app.use(cors());
 app.use(express.json());
 
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY, // ← Netlifyに設定したAPIキーがここに入ります
+  apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
+    console.log("ユーザーからのメッセージ:", message);
 
     const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo", // ここは gpt-4 にしてもOK（有料プラン）
+      model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: message }],
     });
 
-    const reply = completion.data.choices[0].message.content;
-    res.json({ reply }); // ← ココ！これが reply に入っていないとフロントで undefined になります
+    const reply = completion.data.choices[0]?.message?.content;
+    console.log("麗花の返答:", reply);
+
+    res.json({ reply });
   } catch (error) {
-    console.error("OpenAI API Error:", error.message);
-    res.status(500).json({ error: "OpenAI API からの応答に失敗しました。" });
+    console.error("OpenAI API Error:", error);
+    res.status(500).json({ reply: "APIエラーが発生しました。" });
   }
 });
 
