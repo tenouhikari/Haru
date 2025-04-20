@@ -1,23 +1,62 @@
-const API_KEY = "sk-あなたのAPIキー"; // 必ず自分のAPIキーに置き換える！
+const chatBox = document.getElementById("chat-box");
+const userInput = document.getElementById("user-input");
+const sendButton = document.getElementById("send-button");
+const toggleVoiceButton = document.getElementById("toggle-voice");
 
-async function getReikaResponse(userMessage) {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${API_KEY}`
-        },
-        body: JSON.stringify({
-            model: "gpt-3.5-turbo",  // または "gpt-4"
-            messages: [
-                { role: "system", content: "あなたは優しく賢いAIの麗花として会話してください。" },
-                { role: "user", content: userMessage }
-            ]
-        })
+let voiceEnabled = true;
+
+// メッセージを表示する関数
+function addMessage(sender, text) {
+  const message = document.createElement("div");
+  message.textContent = `${sender}: ${text}`;
+  chatBox.appendChild(message);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// 音声で読み上げる関数
+function speak(text) {
+  if (!voiceEnabled) return;
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.voice = speechSynthesis.getVoices().find(voice => voice.name.includes("Google") || voice.lang === "ja-JP");
+  utterance.rate = 1;
+  utterance.pitch = 1.2;
+  utterance.volume = 0.6;
+  speechSynthesis.speak(utterance);
+}
+
+// メッセージを送信する関数
+async function sendMessage() {
+  const input = userInput.value.trim();
+  if (!input) return;
+
+  addMessage("葩瑠", input);
+  userInput.value = "";
+
+  try {
+    const response = await fetch("/.netlify/functions/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: input })
     });
 
     const data = await response.json();
-    const reikaReply = data.choices?.[0]?.message?.content || "ごめんなさい、うまく返答できませんでした。";
-    return reikaReply;
+    const reply = data.reply;
+    addMessage("麗花", reply);
+    speak(reply);
+  } catch (error) {
+    addMessage("システム", "エラーが発生しました。");
+  }
 }
+
+// 音声切り替えボタン
+toggleVoiceButton.addEventListener("click", () => {
+  voiceEnabled = !voiceEnabled;
+  toggleVoiceButton.textContent = `音声: ${voiceEnabled ? "オン" : "オフ"}`;
+});
+
+sendButton.addEventListener("click", sendMessage);
+userInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
     
