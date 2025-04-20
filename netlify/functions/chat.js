@@ -24,7 +24,7 @@ app.post("/chat", async (req, res) => {
     });
 
     const reply = completion.data.choices[0].message.content;
-    res.json({ reply });
+    res.json({ reply }); // ← 必ずこの形式で
   } catch (error) {
     console.error("OpenAI API error:", error);
     res.status(500).json({ error: "Failed to get response from OpenAI." });
