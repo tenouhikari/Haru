@@ -41,7 +41,7 @@ async function sendMessage() {
     });
 
     const data = await response.json();
-    const reply = data.reply;
+const reply = data.reply || "返答が取得できませんでした。";
     addMessage("麗花", reply);
     speak(reply);
   } catch (error) {
