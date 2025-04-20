@@ -1,35 +1,34 @@
-import { Configuration, OpenAIApi } from "openai";
-import express from "express";
-import serverless from "serverless-http";
-import cors from "cors";
-
-const app = express();
-app.use(cors());
-app.use(express.json());
+const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-app.post("/chat", async (req, res) => {
+exports.handler = async (event) => {
   try {
-    const { message } = req.body;
-    console.log("ユーザーからのメッセージ:", message);
+    const body = JSON.parse(event.body);
+    const userMessage = body.message || "";
 
     const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: message }],
+      model: "gpt-3.5-turbo", // or "gpt-4" if your key allows
+      messages: [
+        { role: "system", content: "あなたは可愛らしい声で答えるAIアシスタント、麗花です。" },
+        { role: "user", content: userMessage }
+      ],
     });
 
-    const reply = completion.data.choices[0]?.message?.content;
-    console.log("麗花の返答:", reply);
+    const reply = completion.data.choices[0].message.content;
 
-    res.json({ reply });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ reply: reply }),
+    };
   } catch (error) {
-    console.error("OpenAI API Error:", error);
-    res.status(500).json({ reply: "APIエラーが発生しました。" });
+    console.error("OpenAI API error:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ reply: "エラーが発生しました。" }),
+    };
   }
-});
-
-export const handler = serverless(app);
+};
